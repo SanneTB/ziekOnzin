@@ -32,15 +32,18 @@ if (isset($_POST['logout'])) {
 if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['create_account'])) {
     $user_name = trim($_POST['user_name']);
     $password = trim($_POST['password']);
+    $name = isset($_POST['name']) ? trim($_POST['name']) : '';
+    $email = isset($_POST['email']) ? trim($_POST['email']) : '';
 
-    if (!empty($user_name) && !empty($password) && !is_numeric($user_name)) {
+    if (!empty($user_name) && !empty($password) && !empty($name) && !empty($email) && !is_numeric($user_name)) {
         $password = password_hash($password, PASSWORD_DEFAULT);
-        $user_id = random_num(20);
-        $query = "INSERT INTO users (user_id, user_name, password) VALUES ('$user_id', '$user_name', '$password')";
+
+        $query = "INSERT INTO user (user_name, password, email, name) VALUES ('$user_name', '$password', '$email', '$name')";
         mysqli_query($con, $query);
+
         $message_success = "Account created successfully!";
     } else {
-        $message_info = "Please enter a username and password!";
+        $message_info = "Please enter a username, password, name, and email!";
     }
 }
 
@@ -50,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['login'])) {
     $password_login = trim($_POST['password_login']);
 
     if (!empty($username_login) && !empty($password_login)) {
-        $query = "SELECT * FROM users WHERE user_name = '$username_login' LIMIT 1";
+        $query = "SELECT * FROM user WHERE user_name = '$username_login' LIMIT 1";
         $result = mysqli_query($con, $query);
 
         if ($result && mysqli_num_rows($result) > 0) {
@@ -106,6 +109,8 @@ echo "Welcome back, " . $user_data['user_name'] . ".";
             <h1>Create an account</h1>
             <input id="text" type="text" placeholder="Username" name="user_name">
             <input id="text" type="password" placeholder="Password" name="password">
+            <input id="text" type="name" placeholder="Name" name="name">
+            <input id="text" type="email" placeholder="E-Mail" name="email">
             <button type="submit" name="create_account">Create account</button>
         </form>
     </div>
@@ -139,7 +144,7 @@ echo "Welcome back, " . $user_data['user_name'] . ".";
     </div>
 </div>
 
-<script src="../Javascript/restart.js"></script>
+<script src="../JS/restart.js"></script>
 </body>
 
 </html>
